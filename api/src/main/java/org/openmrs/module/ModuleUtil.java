@@ -60,7 +60,6 @@ public class ModuleUtil {
 	private ModuleUtil() {
 	}
 	
-
 	private static final Logger log = LoggerFactory.getLogger(ModuleUtil.class);
 	
 	/**
