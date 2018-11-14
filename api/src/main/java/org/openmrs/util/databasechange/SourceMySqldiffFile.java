@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.lang.ProcessBuilder;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.util.OpenmrsConstants;
@@ -93,7 +94,6 @@ public class SourceMySqldiffFile implements CustomTaskChange {
 			InputStream sqlFileInputStream = fileOpener.getResourceAsStream(sqlFile);
 			OutputStream outputStream = new FileOutputStream(tmpOutputFile);
 			OpenmrsUtil.copyFile(sqlFileInputStream, outputStream);
-
 		}
 		catch (IOException e) {
 			if (tmpOutputFile != null) {
@@ -208,9 +208,11 @@ public class SourceMySqldiffFile implements CustomTaskChange {
 		if (!OpenmrsConstants.UNIX_BASED_OPERATING_SYSTEM) {
 			wd = null;
 		}
-
-		Process p = (wd != null) ? Runtime.getRuntime().exec(cmdWithArguments, null, wd) : Runtime.getRuntime().exec(
-		    cmdWithArguments);
+		
+		ProcessBuilder build = new ProcessBuilder(cmdWithArguments);
+		if(wd!=null);
+			build.directory(wd);
+		Process p = build.start();
 
 		out.append("Normal cmd output:\n");
 		Reader reader = new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8);
