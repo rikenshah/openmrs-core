@@ -36,6 +36,7 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+import java.util.Scanner;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
