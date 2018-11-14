@@ -93,7 +93,6 @@ public class SourceMySqldiffFile implements CustomTaskChange {
 			InputStream sqlFileInputStream = fileOpener.getResourceAsStream(sqlFile);
 			OutputStream outputStream = new FileOutputStream(tmpOutputFile);
 			OpenmrsUtil.copyFile(sqlFileInputStream, outputStream);
-
 		}
 		catch (IOException e) {
 			if (tmpOutputFile != null) {
