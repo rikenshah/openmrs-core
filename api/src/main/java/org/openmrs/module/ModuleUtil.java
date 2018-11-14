@@ -60,6 +60,7 @@ public class ModuleUtil {
 	private ModuleUtil() {
 	}
 	
+
 	private static final Logger log = LoggerFactory.getLogger(ModuleUtil.class);
 	
 	/**
@@ -179,35 +180,40 @@ public class ModuleUtil {
 	 * @return filename String of the file's name of the stream
 	 */
 	public static File insertModuleFile(InputStream inputStream, String filename) {
-		File folder = getModuleRepository();
 		
-		// check if module filename is already loaded
-		if (OpenmrsUtil.folderContains(folder, filename)) {
-			throw new ModuleException(filename + " is already associated with a loaded module.");
-		}
+		if(isValidFileName(filename)){
+			File folder = getModuleRepository();
 		
-		File file = new File(folder.getAbsolutePath(), filename);
-		
-		FileOutputStream outputStream = null;
-		try {
-			outputStream = new FileOutputStream(file);
-			OpenmrsUtil.copyFile(inputStream, outputStream);
-		}
-		catch (IOException e) {
-			throw new ModuleException("Can't create module file for " + filename, e);
-		}
-		finally {
-			try {
-				inputStream.close();
+			// check if module filename is already loaded
+			if (OpenmrsUtil.folderContains(folder, filename)) {
+				throw new ModuleException(filename + " is already associated with a loaded module.");
 			}
-			catch (Exception e) { /* pass */}
+			
+			File file = new File(folder.getAbsolutePath(), filename);
+			
+			FileOutputStream outputStream = null;
 			try {
-				outputStream.close();
+				outputStream = new FileOutputStream(file);
+				OpenmrsUtil.copyFile(inputStream, outputStream);
 			}
-			catch (Exception e) { /* pass */}
+			catch (IOException e) {
+				throw new ModuleException("Can't create module file for " + filename, e);
+			}
+			finally {
+				try {
+					inputStream.close();
+				}
+				catch (Exception e) { /* pass */}
+				try {
+					outputStream.close();
+				}
+				catch (Exception e) { /* pass */}
+			}
+			
+			return file;	
+		}else{
+			throw new ModuleException("Invalid module file name: " + filename, e);
 		}
-		
-		return file;
 	}
 
 	/**
@@ -1259,5 +1265,30 @@ public class ModuleUtil {
 		}
 		
 		return null;
+	}
+
+	private static boolean isValidFileName(String fileName){
+
+		File f = new File(fileName);
+	    try {
+	    	// Check if the fileName is valid according to OS Rules
+	       	f.getCanonicalPath();
+		}catch (IOException e) {
+	    	return false;
+	    }
+       	
+       	// Validate filename against whitelist if it is valid name
+       	URL url = getClass().getResource("/filename-whitelist.txt");
+	  	Scanner sc = new Scanner(File(url.getPath())).useDelimiter(System.lineSeparator());
+		ArrayList<String> whiteList = new ArrayList<String>();
+		while (sc.hasNextLine()){
+	    	whiteList.add(sc.nextLine());
+		}
+		sc.close();
+		
+		if(whiteList.contains(fileName))
+			return true;
+		else
+			return false;
 	}
 }
