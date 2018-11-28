@@ -89,9 +89,10 @@ public class SourceMySqldiffFile implements CustomTaskChange {
 
 		// copy the file from the classpath to a real file
 		File tmpOutputFile = null;
+		InputStream sqlFileInputStream = null;
 		try {
 			tmpOutputFile = File.createTempFile(sqlFile, "tmp");
-			InputStream sqlFileInputStream = fileOpener.getResourceAsStream(sqlFile);
+			sqlFileInputStream = fileOpener.getResourceAsStream(sqlFile);
 			OutputStream outputStream = new FileOutputStream(tmpOutputFile);
 			OpenmrsUtil.copyFile(sqlFileInputStream, outputStream);
 		}
@@ -208,7 +209,7 @@ public class SourceMySqldiffFile implements CustomTaskChange {
 		if (!OpenmrsConstants.UNIX_BASED_OPERATING_SYSTEM) {
 			wd = null;
 		}
-		
+
 		ProcessBuilder build = new ProcessBuilder(cmdWithArguments);
 		if(wd!=null);
 			build.directory(wd);
